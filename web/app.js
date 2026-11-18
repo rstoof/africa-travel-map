@@ -37,27 +37,36 @@ function labelMarker(key, lat, lon, cls, text) {
   }
   return labelMarkers.get(key);
 }
-// Greedy placement: candidates in priority order, skip any that overlaps a placed label.
+// Greedy placement: candidates in priority order; each label tries its own spot, then a bit
+// above or below it, and is skipped if all overlap an already placed label or exception dot.
+const exceptionPoints = [];
 function updateLabels() {
   if (!labelData) return;
   const z = map.getZoom();
-  const placed = [];
-  const fits = (lat, lon, text, size, centred) => {
+  const placed = exceptionPoints.map((ll) => {
+    const p = map.latLngToLayerPoint(ll);
+    return [p.x - 6, p.y - 6, p.x + 6, p.y + 6];
+  });
+  const place = (m, lat, lon, text, size, centred, shifts) => {
     const p = map.latLngToLayerPoint([lat, lon]);
     const w = text.length * size * 0.62 + 6;
-    const x0 = centred ? p.x - w / 2 : p.x - 8;
-    const box = [x0, p.y - size, x0 + w, p.y + size];
-    if (placed.some((b) => box[0] < b[2] && box[2] > b[0] && box[1] < b[3] && box[3] > b[1])) return false;
-    placed.push(box);
-    return true;
+    for (const dy of shifts) {
+      const x0 = centred ? p.x - w / 2 : p.x + 7; // city text starts right of its dot
+      const box = [x0, p.y + dy - size, x0 + w, p.y + dy + size];
+      if (placed.some((b) => box[0] < b[2] && box[2] > b[0] && box[1] < b[3] && box[3] > b[1])) continue;
+      placed.push(box);
+      m.setLatLng(map.layerPointToLatLng([p.x, p.y + dy])).addTo(map);
+      return;
+    }
+    m.remove();
   };
   for (const c of labelData.countries) {
     const m = labelMarker(`c:${c.iso}`, c.lat, c.lon, "lbl-country", c.name);
-    z < COUNTRY_LABELS_BELOW && fits(c.lat, c.lon, c.name, 11, true) ? m.addTo(map) : m.remove();
+    z < COUNTRY_LABELS_BELOW ? place(m, c.lat, c.lon, c.name, 11, true, [0, -15, 15]) : m.remove();
   }
   for (const c of labelData.cities) {
     const m = labelMarker(`p:${c.name}:${c.lat}`, c.lat, c.lon, `lbl-city${c.cap ? " cap" : ""}`, c.name);
-    z >= Math.max(c.z, COUNTRY_LABELS_BELOW) && fits(c.lat, c.lon, c.name, 11, false) ? m.addTo(map) : m.remove();
+    z >= Math.max(c.z, COUNTRY_LABELS_BELOW) ? place(m, c.lat, c.lon, c.name, 11, false, [0]) : m.remove();
   }
 }
 map.on("zoomend", updateLabels);
@@ -238,6 +247,7 @@ Promise.all([
       pane: "exceptions", radius: 5, fillColor: LEVELS[p.level].color, fillOpacity: 1, color: "#1d2330", weight: 1.5,
     });
     dot.feature = l.feature;
+    exceptionPoints.push(dot.getLatLng());
     dot.bindTooltip(l.getTooltip().getContent(), { direction: "top", offset: [0, -6] });
     dot.on("click", () => showCountry(p.iso, p));
     layer.addLayer(dot);
