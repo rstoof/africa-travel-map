@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reisadvies Afrika</title>
+<meta name="description" content="Interactieve kaart van de Nederlandse reisadviezen voor Afrika, per regio.">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="map" aria-label="Kaart van Afrika met reisadvies per regio"></div>
+
+<aside id="panel">
+  <header class="panel-head">
+    <h1>Reisadvies Afrika</h1>
+    <p class="sub">Kleurcodes van het Ministerie van Buitenlandse Zaken, per regio.</p>
+    <label class="search">
+      <span class="sr">Zoek een land</span>
+      <input id="search" type="search" placeholder="Zoek een land…" list="country-list" autocomplete="off">
+      <datalist id="country-list"></datalist>
+    </label>
+  </header>
+
+  <ul class="legend" id="legend"></ul>
+
+  <section id="detail" hidden>
+    <button id="close" class="close" aria-label="Sluiten">×</button>
+    <h2 id="d-name"></h2>
+    <p id="d-zone" class="zone"></p>
+    <p id="d-warn" class="warn" hidden>De kaart lijkt niet overeen te komen met de actuele tekst. Lees het volledige reisadvies.</p>
+    <p class="meta"><span id="d-date"></span> · <a id="d-link" target="_blank" rel="noopener">Volledig reisadvies ↗</a></p>
+    <div id="d-summary" class="prose"></div>
+    <details id="d-regional-wrap"><summary>Regionale risico's</summary><div id="d-regional" class="prose"></div></details>
+    <details id="d-current-wrap"><summary>Actueel</summary><div id="d-current" class="prose"></div></details>
+  </section>
+
+  <section id="intro">
+    <p>Klik op een gebied voor het reisadvies. De zones zijn automatisch overgenomen van de officiële kaarten
+      en kunnen afwijken; de tekst op <a href="https://www.nederlandwereldwijd.nl/reisadvies" target="_blank" rel="noopener">nederlandwereldwijd.nl</a> is leidend.</p>
+    <div class="counts" id="counts"></div>
+  </section>
+
+  <footer class="foot">
+    <span>Geen officiële publicatie. Bron: <a href="https://opendata.nederlandwereldwijd.nl/" target="_blank" rel="noopener">Open Data Nederland Wereldwijd</a>, Natural Earth.</span>
+    <span id="generated"></span>
+  </footer>
+</aside>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

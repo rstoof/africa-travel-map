@@ -1,0 +1,10 @@
+{
+ "iso": "NER",
+ "pixel_counts": {
+  "4": 159676
+ },
+ "method": "single",
+ "levels": [
+  4
+ ]
+}
