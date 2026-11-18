@@ -11,13 +11,30 @@ regional risks text, with a link to the official advice.
 > Unofficial. The zones are traced automatically and can be off. The text on
 > [nederlandwereldwijd.nl](https://www.nederlandwereldwijd.nl/reisadvies) is always leading.
 
+**Live: [rstoof.github.io/africa-travel-map](https://rstoof.github.io/africa-travel-map/)**
+
+![Overview of Africa with the current colour codes per region](docs/screenshots/overview.png)
+
+<table>
+  <tr>
+    <td width="50%"><img src="docs/screenshots/detail.png" alt="Nigeria zoomed in: city names, the Kano exception and the advice text for the red zone"></td>
+    <td width="50%"><img src="docs/screenshots/changes.png" alt="Changes since November 2025 in Ethiopia, with the explanation for orange to red"></td>
+  </tr>
+  <tr>
+    <td><b>Click a region</b> for the advice text that explains its colour. Zoom in for city names; dots mark city exceptions such as Kano.</td>
+    <td><b>Wijzigingen</b>: compare any two dates. Outlined areas changed colour (dark red stricter, blue milder); click one for the explanation.</td>
+  </tr>
+</table>
+
+<p align="center"><img src="docs/screenshots/mobile.png" width="280" alt="Mobile layout of the changes view"></p>
+
 ## How it works
 
 ```
 fetch.py   API ──► data/raw/<ISO>/advice.json + map.png
 trace.py   map.png ──► data/traced/<ISO>.geojson   (+ <ISO>.json fit report)
 build.py   traced + advice ──► web/data/{zones.geojson, countries.json, land.geojson}
-history.py web/data ──► web/data/history/ (snapshots, diffs, events) + web/feed.xml
+history.py web/data ──► web/data/history/ (snapshots, diffs, events)
 web/       static Leaflet app, no API keys, no tile server
 ```
 
@@ -74,9 +91,8 @@ python src/history.py backfill <dir with <locationkey>_legend.png> 2025-11-02
 
 ## Monitoring
 
-- The daily workflow commits new snapshots and **opens a GitHub issue** listing the colour changes
-  (watch the repository to get these by e-mail).
-- `feed.xml` is an Atom feed of all colour changes. Subscribe in any feed reader.
+The daily workflow commits new snapshots and **opens a GitHub issue** listing the colour changes.
+Watch the repository to get these by e-mail.
 
 ## Run it
 

@@ -8,7 +8,6 @@ needs is written under web/data/history/:
   <ISO>/diff_<a>_<b>.geojson  areas whose level differs between two snapshots
   <ISO>/text_<date>.json      advice text as of <date> (kept from the first run on)
 
-and web/feed.xml, an Atom feed of the changes.
 
 Usage:
   history.py record [--date YYYY-MM-DD]   snapshot web/data (run after build.py)
@@ -18,7 +17,6 @@ import json
 import re
 import sys
 from datetime import date as Date, datetime, timezone
-from html import escape
 from itertools import combinations
 from os import environ
 from pathlib import Path
@@ -180,7 +178,7 @@ def backfill(index, maps_dir, day):
 
 
 def finalize(index, names):
-    """Write pairwise diffs, derive change events, write index and feed."""
+    """Write pairwise diffs, derive change events and write the index."""
     events = []
     for iso, snaps in index["snapshots"].items():
         dates = [s["date"] for s in snaps]
@@ -206,37 +204,11 @@ def finalize(index, names):
     index["text_updates"] = [{"date": d, "iso": i} for d, i in index["text_updates"]]
     index["dates"] = sorted({s["date"] for snaps in index["snapshots"].values() for s in snaps})
     (HIST / "index.json").write_text(json.dumps(index, ensure_ascii=False, indent=1))
-    write_feed(index)
 
 
 def describe(e):
     parts = [f"{LEVEL_NAMES[a]} → {LEVEL_NAMES[b]}" for a, b in e["transitions"]]
     return f"{e['name']}: {', '.join(parts)}" if parts else f"{e['name']}: kaart aangepast"
-
-
-def write_feed(index):
-    site = environ.get("SITE_URL", "")
-    entries = []
-    for e in index["events"][:100]:
-        url = f"{site}#{e['iso']}"
-        detail = f"Strenger: {e['worse_km2']:,} km². Milder: {e['better_km2']:,} km².".replace(",", ".")
-        entries.append(f"""  <entry>
-    <id>tag:africa-travel-map,{e['date']}:{e['iso']}</id>
-    <title>{escape(describe(e))}</title>
-    <updated>{e['date']}T00:00:00Z</updated>
-    <link href="{escape(url)}"/>
-    <summary>{escape(detail)}</summary>
-  </entry>""")
-    updated = index["events"][0]["date"] if index["events"] else "1970-01-01"
-    (WEB / "feed.xml").write_text(f"""<?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom">
-  <title>Reisadvies Afrika: gewijzigde kleurcodes</title>
-  <id>tag:africa-travel-map,2026:feed</id>
-  <updated>{updated}T00:00:00Z</updated>
-  <link href="{escape(site)}"/>
-{chr(10).join(entries)}
-</feed>
-""")
 
 
 def write_report(index, new, path):
