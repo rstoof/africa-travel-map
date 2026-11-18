@@ -3,47 +3,47 @@
   <title>Reisadvies Afrika: gewijzigde kleurcodes</title>
   <id>tag:africa-travel-map,2026:feed</id>
   <updated>2026-11-18T00:00:00Z</updated>
-  <link href=""/>
+  <link href="https://rstoof.github.io/africa-travel-map/"/>
   <entry>
     <id>tag:africa-travel-map,2026-11-18:TGO</id>
     <title>Togo: geel → oranje</title>
     <updated>2026-11-18T00:00:00Z</updated>
-    <link href="#TGO"/>
+    <link href="https://rstoof.github.io/africa-travel-map/#TGO"/>
     <summary>Strenger: 5.180 km². Milder: 0 km².</summary>
   </entry>
   <entry>
     <id>tag:africa-travel-map,2026-11-12:MLI</id>
     <title>Mali: rood → oranje</title>
     <updated>2026-11-12T00:00:00Z</updated>
-    <link href="#MLI"/>
+    <link href="https://rstoof.github.io/africa-travel-map/#MLI"/>
     <summary>Strenger: 0 km². Milder: 195 km².</summary>
   </entry>
   <entry>
     <id>tag:africa-travel-map,2026-09-30:ETH</id>
     <title>Ethiopië: geel → oranje, geel → rood, oranje → geel, oranje → rood, rood → oranje</title>
     <updated>2026-09-30T00:00:00Z</updated>
-    <link href="#ETH"/>
+    <link href="https://rstoof.github.io/africa-travel-map/#ETH"/>
     <summary>Strenger: 173.889 km². Milder: 4.877 km².</summary>
   </entry>
   <entry>
     <id>tag:africa-travel-map,2026-03-25:BEN</id>
     <title>Benin: geel → oranje, geel → rood, oranje → rood</title>
     <updated>2026-03-25T00:00:00Z</updated>
-    <link href="#BEN"/>
+    <link href="https://rstoof.github.io/africa-travel-map/#BEN"/>
     <summary>Strenger: 26.144 km². Milder: 0 km².</summary>
   </entry>
   <entry>
     <id>tag:africa-travel-map,2026-02-13:DZA</id>
     <title>Algerije: geel → rood, rood → geel, rood → oranje</title>
     <updated>2026-02-13T00:00:00Z</updated>
-    <link href="#DZA"/>
+    <link href="https://rstoof.github.io/africa-travel-map/#DZA"/>
     <summary>Strenger: 157 km². Milder: 61.672 km².</summary>
   </entry>
   <entry>
     <id>tag:africa-travel-map,2025-12-04:MOZ</id>
     <title>Mozambique: geel → oranje</title>
     <updated>2025-12-04T00:00:00Z</updated>
-    <link href="#MOZ"/>
+    <link href="https://rstoof.github.io/africa-travel-map/#MOZ"/>
     <summary>Strenger: 9.482 km². Milder: 0 km².</summary>
   </entry>
 </feed>

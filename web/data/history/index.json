@@ -341,18 +341,6 @@
     ],
     "observed": "2025-11-02",
     "source": "backfill"
-   },
-   {
-    "date": "2026-11-18",
-    "levels": [
-     2,
-     3,
-     4
-    ],
-    "observed": "2026-11-18",
-    "dated_by": "observed",
-    "after": "2025-11-02",
-    "map_file": "Reisadvies_Marokko en Westelijke Sahara_31-10-2022.png"
    }
   ],
   "MDG": [
@@ -748,25 +736,6 @@
     [
      2,
      3
-    ]
-   ]
-  },
-  {
-   "date": "2026-11-18",
-   "iso": "MAR",
-   "name": "Marokko",
-   "prev": "2025-11-02",
-   "after": "2025-11-02",
-   "worse_km2": 65,
-   "better_km2": 1529,
-   "transitions": [
-    [
-     2,
-     3
-    ],
-    [
-     3,
-     2
     ]
    ]
   },

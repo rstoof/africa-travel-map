@@ -11,6 +11,7 @@ Per country:
 
 Output: data/traced/<ISO3>.geojson and data/traced/<ISO3>.json (fit report).
 """
+import hashlib
 import json
 import sys
 from pathlib import Path
@@ -271,13 +272,22 @@ def trace(iso, image_path=None):
     return feats, report
 
 
-def main(isos):
+def main(isos, force=False):
     OUT.mkdir(parents=True, exist_ok=True)
     for iso in isos:
-        if not (RAW / iso / "map.png").exists():
+        png = RAW / iso / "map.png"
+        if not png.exists():
             print(f"{iso}: no map")
             continue
+        # Only re-trace when the map image changed: the fit is an optimisation whose
+        # last digits vary across library versions, which would show up as fake changes.
+        digest = hashlib.sha256(png.read_bytes()).hexdigest()
+        report_path = OUT / f"{iso}.json"
+        if not force and report_path.exists() and (OUT / f"{iso}.geojson").exists():
+            if json.loads(report_path.read_text()).get("map_sha256") == digest:
+                continue
         feats, report = trace(iso)
+        report["map_sha256"] = digest
         (OUT / f"{iso}.geojson").write_text(json.dumps(
             {"type": "FeatureCollection", "features": feats}))
         (OUT / f"{iso}.json").write_text(json.dumps(report, indent=1))
@@ -286,5 +296,6 @@ def main(isos):
 
 
 if __name__ == "__main__":
-    isos = sys.argv[1:] or sorted(p.name for p in RAW.iterdir() if p.is_dir())
-    main(isos)
+    args = [a for a in sys.argv[1:] if a != "--force"]
+    isos = args or sorted(p.name for p in RAW.iterdir() if p.is_dir())
+    main(isos, force="--force" in sys.argv)
