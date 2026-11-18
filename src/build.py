@@ -9,16 +9,14 @@ import re
 from html.parser import HTMLParser
 from pathlib import Path
 
-from shapely.geometry import mapping, shape
-
-from shapely.geometry import box
+from shapely.geometry import box, mapping, shape
+from shapely.ops import polylabel
 
 from geo import all_land, country_shape
 
 ROOT = Path(__file__).resolve().parent.parent
 RAW = ROOT / "data" / "raw"
 TRACED = ROOT / "data" / "traced"
-OVERRIDES = ROOT / "overrides"
 WEB = ROOT / "web" / "data"
 SIMPLIFY_DEG = 0.004  # ~400 m, invisible at the zoom levels the map allows
 
@@ -109,29 +107,14 @@ def publishable(iso, zones):
     return out
 
 
-def load_override(iso):
-    p = OVERRIDES / f"{iso}.json"
-    return json.loads(p.read_text()) if p.exists() else None
-
-
 def main():
     WEB.mkdir(parents=True, exist_ok=True)
     index = {c["iso"]: c for c in json.loads((RAW / "index.json").read_text())}
     features, countries = [], {}
     for iso, info in sorted(index.items()):
         advice = json.loads((RAW / iso / "advice.json").read_text())
-        override = load_override(iso)
-        if override and "level" in override:
-            # whole-country override, e.g. when the map is missing or known stale
-            zones = [{"properties": {"iso": iso, "level": override["level"]},
-                      "geometry": mapping(country_shape(iso))}]
-        else:
-            path = TRACED / f"{iso}.geojson"
-            zones = json.loads(path.read_text())["features"] if path.exists() else []
-        report_path = TRACED / f"{iso}.json"
-        report = json.loads(report_path.read_text()) if report_path.exists() else {}
-
-        zones = publishable(iso, zones)
+        path = TRACED / f"{iso}.geojson"
+        zones = publishable(iso, json.loads(path.read_text())["features"] if path.exists() else [])
         features += zones
         levels = {z["properties"]["level"] for z in zones}
 
@@ -145,8 +128,6 @@ def main():
             "regional": block(advice, "regionale"),
             "by_level": by_level(raw_block(advice, "regionale")),
             "current": block(advice, "actueel"),
-            "method": "override" if override and "level" in override else report.get("method"),
-            "fit_iou": report.get("iou"),
             "text_levels": text_levels(advice),
         }
         countries[iso]["mismatch"] = bool(countries[iso]["text_levels"]) and \
@@ -180,17 +161,14 @@ SHORT_NAMES = {
 
 def write_labels(countries):
     """Country names (shown zoomed out) and city names (shown zoomed in)."""
-    from shapely.ops import polylabel
-
     labels = {"countries": [], "cities": []}
-    for iso, c in countries.items():
+    # largest countries first: they win when labels collide
+    for iso in sorted(countries, key=lambda i: -country_shape(i).area):
         geom = country_shape(iso)
         main = max(getattr(geom, "geoms", [geom]), key=lambda g: g.area)
         pt = polylabel(main, tolerance=0.05)
-        labels["countries"].append({"iso": iso, "name": SHORT_NAMES.get(iso, c["name"]),
-                                    "lon": round(pt.x, 3), "lat": round(pt.y, 3),
-                                    "area": round(geom.area, 2)})
-    labels["countries"].sort(key=lambda c: -c["area"])
+        labels["countries"].append({"iso": iso, "name": SHORT_NAMES.get(iso, countries[iso]["name"]),
+                                    "lon": round(pt.x, 3), "lat": round(pt.y, 3)})
     codes = set(countries) | {"SOL", "SAH", "SDS"}
     places = json.loads((ROOT / "data" / "ref" / "ne_10m_populated_places_simple.geojson").read_text())
     for f in places["features"]:
@@ -215,13 +193,13 @@ def write_background():
     """Simplified land of the surrounding region, used instead of a tile basemap."""
     view = box(-45, -50, 80, 50)
     feats = []
-    for code, geom in sorted(all_land().items()):
+    for _, geom in sorted(all_land().items()):
         g = geom.intersection(view)
         if g.is_empty:
             continue
         g = g.simplify(0.02, preserve_topology=True)
         if not g.is_empty:
-            feats.append({"type": "Feature", "properties": {"a3": code}, "geometry": _round(mapping(g), 3)})
+            feats.append({"type": "Feature", "properties": {}, "geometry": _round(mapping(g), 3)})
     (WEB / "land.geojson").write_text(json.dumps(
         {"type": "FeatureCollection", "features": feats}, separators=(",", ":")))
 

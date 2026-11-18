@@ -6,7 +6,6 @@ Raw data lands in data/raw/<ISO3>/:
 A per-run index is written to data/raw/index.json.
 """
 import json
-import sys
 import time
 from pathlib import Path
 
@@ -43,34 +42,26 @@ def list_countries():
             return out
 
 
-def fetch_country(iso, key, force=False):
+def fetch_country(iso, key):
     d = RAW / iso
     d.mkdir(parents=True, exist_ok=True)
     advice = get(f"{API}/countries/{key}/traveladvice", output="json").json()
     if isinstance(advice, list):
         advice = advice[0]
-    old = d / "advice.json"
-    prev = json.loads(old.read_text()) if old.exists() else {}
-    changed = prev.get("lastmodified") != advice.get("lastmodified")
-    old.write_text(json.dumps(advice, ensure_ascii=False, indent=1))
-
-    legend = next((f for f in advice.get("files", []) if (f.get("mapType") or f.get("maptype")) == "legend"), None)
-    map_path = d / "map.png"
-    if legend and (force or changed or not map_path.exists()):
-        map_path.write_bytes(get(legend["fileurl"]).content)
+    (d / "advice.json").write_text(json.dumps(advice, ensure_ascii=False, indent=1))
+    legend = next((f for f in advice.get("files", []) if f.get("mapType") == "legend"), None)
+    if legend:
+        (d / "map.png").write_bytes(get(legend["fileurl"]).content)
     return {
         "iso": iso,
         "key": key,
         "name": advice.get("location"),
         "lastmodified": advice.get("lastmodified"),
         "map_file": legend.get("filename") if legend else None,
-        "map_modified": legend.get("fileModifiedDate") if legend else None,
-        "has_map": map_path.exists(),
-        "changed": changed,
     }
 
 
-def main(force=False):
+def main():
     RAW.mkdir(parents=True, exist_ok=True)
     countries = list_countries()
     (RAW / "countries.json").write_text(json.dumps(countries, ensure_ascii=False, indent=1))
@@ -82,16 +73,15 @@ def main(force=False):
             print(f"  {iso}: not in API, skipped")
             continue
         try:
-            info = fetch_country(iso, c["locationkey"], force)
+            info = fetch_country(iso, c["locationkey"])
         except requests.RequestException as e:
             print(f"  {iso}: FAILED {e}")
             continue
-        flag = "changed" if info["changed"] else "same"
-        print(f"  {iso} {info['name']:<32} {info['lastmodified']}  map={info['map_file']}  [{flag}]")
+        print(f"  {iso} {info['name']:<32} {info['lastmodified']}  map={info['map_file']}")
         index.append(info)
     (RAW / "index.json").write_text(json.dumps(index, ensure_ascii=False, indent=1))
-    print(f"{len(index)} countries, {sum(i['changed'] for i in index)} changed")
+    print(f"{len(index)} countries")
 
 
 if __name__ == "__main__":
-    main(force="--force" in sys.argv)
+    main()

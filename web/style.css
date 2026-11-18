@@ -5,10 +5,6 @@
   --line: #e3e6ec;
   --accent: #154273;
   --panel-w: 380px;
-  --l1: #7feb00;
-  --l2: #ffeb00;
-  --l3: #ffa000;
-  --l4: #e8221b;
   --sea: #dfe9f2;
 }
 @media (prefers-color-scheme: dark) {

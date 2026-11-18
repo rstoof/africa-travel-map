@@ -14,12 +14,10 @@ REF = Path(__file__).resolve().parent.parent / "data" / "ref"
 COMPOSITE = {
     "SOM": ["SOM", "SOL"],
     "MAR": ["MAR", "SAH"],
-    "SDN": ["SDN"],
 }
 # Overseas territories that Natural Earth folds into their sovereign state.
 CLIP = {
     "REU": ("FRA", box(55.0, -21.6, 56.0, -20.7)),
-    "MYT": ("FRA", box(44.9, -13.1, 45.4, -12.5)),
 }
 NE_CODE = {"SSD": "SDS"}
 

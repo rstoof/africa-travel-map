@@ -72,15 +72,18 @@ def load_index():
     p = HIST / "index.json"
     if p.exists():
         return json.loads(p.read_text())
-    return {"snapshots": {}, "lastmodified": {}, "text_updates": []}
+    return {"snapshots": {}, "texts": {}}
 
 
-def save_snapshot(index, iso, day, feats, **meta):
+def save_snapshot(index, iso, day, feats, after=None):
     (HIST / iso).mkdir(parents=True, exist_ok=True)
     (HIST / iso / f"{day}.geojson").write_text(json.dumps(
         {"type": "FeatureCollection", "features": feats}, separators=(",", ":")))
     snaps = [s for s in index["snapshots"].get(iso, []) if s["date"] != day]
-    snaps.append({"date": day, "levels": sorted({f["properties"]["level"] for f in feats}), **meta})
+    snap = {"date": day, "levels": sorted({f["properties"]["level"] for f in feats})}
+    if after:
+        snap["after"] = after
+    snaps.append(snap)
     index["snapshots"][iso] = sorted(snaps, key=lambda s: s["date"])
 
 
@@ -141,25 +144,17 @@ def record(index, observed):
                 floor = last["date"] if last else baseline
                 md = map_date(c.get("map_file"))
                 if md and md <= observed and md > floor:
-                    day, dated_by = md, "map"
+                    day, after = md, None
                 elif last is None:
-                    day, dated_by = min(baseline, observed), "baseline"
+                    day, after = min(baseline, observed), None
                 else:
-                    day, dated_by = observed, "observed"
-                save_snapshot(index, iso, day, feats, observed=observed, dated_by=dated_by,
-                              after=floor if dated_by == "observed" else None,
-                              map_file=c.get("map_file"))
+                    day, after = observed, floor  # exact date unknown
+                save_snapshot(index, iso, day, feats, after=after)
                 if last is not None:
                     new.append((iso, day))
                 print(f"  {iso}: new snapshot {day}")
 
         save_text(index, iso, c)
-
-        prev = index["lastmodified"].get(iso)
-        if prev and c["lastmodified"] and c["lastmodified"] != prev:
-            index["text_updates"].append({"date": c["lastmodified"][:10], "iso": iso})
-        if c["lastmodified"]:
-            index["lastmodified"][iso] = c["lastmodified"]
     return new
 
 
@@ -173,7 +168,7 @@ def backfill(index, maps_dir, day):
         if not path.exists():
             continue
         feats, _ = trace(iso, path)
-        save_snapshot(index, iso, day, publishable(iso, feats), observed=day, source="backfill")
+        save_snapshot(index, iso, day, publishable(iso, feats))
         print(f"  {iso}: backfilled {day}")
 
 
@@ -200,8 +195,10 @@ def finalize(index, names):
                 "transitions": sorted({(x["from"], x["to"]) for x in p}),
             })
     index["events"] = sorted(events, key=lambda e: (e["date"], e["iso"]), reverse=True)
-    index["text_updates"] = sorted({(t["date"], t["iso"]) for t in index["text_updates"]}, reverse=True)
-    index["text_updates"] = [{"date": d, "iso": i} for d, i in index["text_updates"]]
+    # every stored text version after a country's first one is a text update
+    index["text_updates"] = sorted(({"date": t["date"], "iso": iso}
+                                    for iso, texts in index.get("texts", {}).items() for t in texts[1:]),
+                                   key=lambda t: (t["date"], t["iso"]), reverse=True)
     index["dates"] = sorted({s["date"] for snaps in index["snapshots"].values() for s in snaps})
     (HIST / "index.json").write_text(json.dumps(index, ensure_ascii=False, indent=1))
 

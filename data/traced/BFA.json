@@ -1,8 +1,5 @@
 {
  "iso": "BFA",
- "pixel_counts": {
-  "4": 141929
- },
  "cities": [
   {
    "name": "Ouagadougou",
@@ -17,16 +14,9 @@
    "lat": 11.177
   }
  ],
- "uncovered_area_deg2": 0.0412,
  "method": "traced",
  "crs": "merc",
  "iou": 0.9951,
- "params": [
-  1304.5054713993648,
-  1312.5712031417952,
-  -763431.0566205564,
-  1781154.8667629636
- ],
  "levels": [
   3,
   4

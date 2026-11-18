@@ -7,6 +7,5 @@ AFRICA_ISO3 = [
     "MWI", "MLI", "MRT", "MUS", "MAR", "MOZ", "NAM", "NER", "NGA", "RWA",
     "STP", "SEN", "SYC", "SLE", "SOM", "ZAF", "SSD", "SDN", "TZA", "TGO",
     "TUN", "UGA", "ZMB", "ZWE",
-    # Territories / disputed areas that have their own advice
-    "ESH", "REU", "MYT", "SHN",
+    "REU",  # Réunion has its own advice
 ]

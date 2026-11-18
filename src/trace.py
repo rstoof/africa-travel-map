@@ -211,9 +211,8 @@ def trace(iso, image_path=None):
     markers, labels = find_markers(labels, img)
     labels = drop_lines(labels)
     present = sorted(int(l) for l in np.unique(labels) if l)
-    counts = {int(l): int((labels == l).sum()) for l in present}
     outline = country_shape(iso)
-    report = {"iso": iso, "pixel_counts": counts}
+    report = {"iso": iso}
 
     if len(present) <= 1 and not markers:
         level = present[0] if present else None
@@ -261,13 +260,7 @@ def trace(iso, image_path=None):
                       "geometry": mapping(circle)})
     if cities:
         report["cities"] = cities
-    # parts of the outline the image never covered (far islands): nearest zone
-    covered = unary_union([shape(f["geometry"]) for f in feats])
-    rest = outline.difference(covered.buffer(1e-6))
-    if not rest.is_empty and rest.area > 0:
-        report["uncovered_area_deg2"] = round(rest.area, 4)
     report.update(method="traced", crs=crs, iou=round(score, 4),
-                  params=[float(p) for p in params],
                   levels=sorted({f["properties"]["level"] for f in feats}))
     return feats, report
 

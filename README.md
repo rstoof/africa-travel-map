@@ -99,7 +99,6 @@ Watch the repository to get these by e-mail.
 ```bash
 python3 -m venv .venv && .venv/bin/pip install -r requirements.txt
 make all        # ref data, fetch, trace, build, history  (~1–2 min)
-make preview    # data/preview.png, a static quick-look of all zones
 make serve      # http://localhost:8000
 ```
 
@@ -109,11 +108,6 @@ Open `http://localhost:8000/#NGA` to deep-link a country (ISO3 code).
 
 `.github/workflows/update.yml` runs daily: fetch → trace → build → history, commits changed data,
 opens an issue for colour changes, and deploys `web/` to GitHub Pages. Enable Pages with source **GitHub Actions** in the repository settings.
-
-## Overrides
-
-If a map is missing or clearly stale, put `overrides/<ISO3>.json` with `{"level": 2}` to colour the
-whole country manually. See [overrides/README.md](overrides/README.md).
 
 ## Known limitations
 
