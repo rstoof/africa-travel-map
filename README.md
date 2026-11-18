@@ -40,6 +40,13 @@ Single-colour countries skip the fit and use the outline directly.
 colours. A mismatch (usually a map that lags behind a text update) is printed during the build and shown as a
 warning in the app. At the time of writing all 55 countries match.
 
+## The app
+
+- Country names when zoomed out, city names (Natural Earth `min_zoom`) when zoomed in, with simple
+  collision avoidance. City exceptions (e.g. Kano, Bamako) get a fixed-size dot so they stay visible.
+- Clicking a zone opens the country panel with **"Waarom deze kleur?"**: the part of *Regionale risico's*
+  for that colour, then a link to the full advice on nederlandwereldwijd.nl.
+
 ## Change history
 
 `src/history.py record` compares the freshly built zones with the last snapshot of each country.
@@ -50,6 +57,10 @@ differs (`diff_<a>_<b>.geojson`, with from/to level and km² in an equal-area pr
 A change is dated by the date in the ministry's map file name (`Reisadvies_Mali_12-11-2026.png`)
 when that's plausible; otherwise it's recorded as "between the previous snapshot and today".
 Text-only updates (new `lastmodified` without colour change) are logged separately.
+
+Each version of the advice text is stored too (`text_<date>.json`, from the first run on), so clicking
+a changed area shows the text section for its new colour and, once older versions exist, a
+sentence-level diff of what changed in the text.
 
 In the app, the **Wijzigingen** tab lets you pick any period: the map shows the situation on the end
 date, outlines the areas that changed colour (dark red = stricter, blue = milder), and lists the changes.

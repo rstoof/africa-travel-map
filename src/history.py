@@ -6,6 +6,7 @@ needs is written under web/data/history/:
   index.json                  snapshots per country, change events, text updates
   <ISO>/<date>.geojson        zones of that country from <date> on
   <ISO>/diff_<a>_<b>.geojson  areas whose level differs between two snapshots
+  <ISO>/text_<date>.json      advice text as of <date> (kept from the first run on)
 
 and web/feed.xml, an Atom feed of the changes.
 
@@ -85,6 +86,22 @@ def save_snapshot(index, iso, day, feats, **meta):
     index["snapshots"][iso] = sorted(snaps, key=lambda s: s["date"])
 
 
+def save_text(index, iso, c):
+    """Keep each version of the advice text, dated by its lastmodified."""
+    if not c.get("lastmodified"):
+        return
+    texts = index.setdefault("texts", {}).setdefault(iso, [])
+    if texts and texts[-1]["lastmodified"] == c["lastmodified"]:
+        return
+    day = c["lastmodified"][:10]
+    (HIST / iso).mkdir(parents=True, exist_ok=True)
+    (HIST / iso / f"text_{day}.json").write_text(json.dumps(
+        {k: c.get(k) for k in ("lastmodified", "summary", "regional", "by_level")},
+        ensure_ascii=False, separators=(",", ":")))
+    texts[:] = [t for t in texts if t["date"] != day] + [{"date": day, "lastmodified": c["lastmodified"]}]
+    texts.sort(key=lambda t: t["date"])
+
+
 def snapshot_feats(iso, day):
     return json.loads((HIST / iso / f"{day}.geojson").read_text())["features"]
 
@@ -137,6 +154,8 @@ def record(index, observed):
                 if last is not None:
                     new.append((iso, day))
                 print(f"  {iso}: new snapshot {day}")
+
+        save_text(index, iso, c)
 
         prev = index["lastmodified"].get(iso)
         if prev and c["lastmodified"] and c["lastmodified"] != prev:

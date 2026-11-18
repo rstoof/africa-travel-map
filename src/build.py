@@ -56,12 +56,34 @@ def clean_html(s):
     return re.sub(r"\s+", " ", "".join(p.out)).strip()
 
 
-def block(advice, title_part):
+def raw_block(advice, title_part):
     for cat in advice.get("content", []):
         for b in cat.get("contentblocks", []):
             if title_part in b.get("paragraphtitle", "").lower():
-                return clean_html(b["paragraph"])
+                return b["paragraph"]
     return None
+
+
+def block(advice, title_part):
+    raw = raw_block(advice, title_part)
+    return clean_html(raw) if raw else None
+
+
+def by_level(regional_html):
+    """Split 'Regionale risico's' at its '<h4>Rood: niet reizen</h4>'-style headings."""
+    out = {}
+    if not regional_html:
+        return out
+    parts = re.split(r"(<h\d[^>]*>.*?</h\d>)", regional_html, flags=re.S)
+    current = None
+    for part in parts:
+        heading = re.match(r"<h\d[^>]*>\s*(\w+)", part)
+        if heading and heading[1].lower() in LEVEL_WORDS:
+            current = LEVEL_WORDS[heading[1].lower()]
+            out[current] = ""
+        elif current is not None:
+            out[current] += part
+    return {lvl: clean_html(html_) for lvl, html_ in out.items() if clean_html(html_)}
 
 
 LEVEL_WORDS = {"groen": 1, "geel": 2, "oranje": 3, "rood": 4}
@@ -121,6 +143,7 @@ def main():
             "levels": sorted(levels),
             "summary": clean_html(advice.get("introduction")),
             "regional": block(advice, "regionale"),
+            "by_level": by_level(raw_block(advice, "regionale")),
             "current": block(advice, "actueel"),
             "method": "override" if override and "level" in override else report.get("method"),
             "fit_iou": report.get("iou"),
@@ -137,11 +160,55 @@ def main():
         "countries": countries,
     }, ensure_ascii=False, separators=(",", ":")))
     write_background()
+    write_labels(countries)
     size = (WEB / "zones.geojson").stat().st_size / 1e6
     for iso, c in countries.items():
         if c["mismatch"]:
             print(f"  CHECK {iso}: map levels {c['levels']} != text levels {c['text_levels']}")
     print(f"{len(countries)} countries, {len(features)} zone features, zones.geojson {size:.1f} MB")
+
+
+SHORT_NAMES = {
+    "COD": "DR Congo",
+    "COG": "Congo",
+    "CAF": "Centraal-Afr. Rep.",
+    "SWZ": "Eswatini",
+    "STP": "Sao Tomé",
+    "GNQ": "Equat.-Guinea",
+}
+
+
+def write_labels(countries):
+    """Country names (shown zoomed out) and city names (shown zoomed in)."""
+    from shapely.ops import polylabel
+
+    labels = {"countries": [], "cities": []}
+    for iso, c in countries.items():
+        geom = country_shape(iso)
+        main = max(getattr(geom, "geoms", [geom]), key=lambda g: g.area)
+        pt = polylabel(main, tolerance=0.05)
+        labels["countries"].append({"iso": iso, "name": SHORT_NAMES.get(iso, c["name"]),
+                                    "lon": round(pt.x, 3), "lat": round(pt.y, 3),
+                                    "area": round(geom.area, 2)})
+    labels["countries"].sort(key=lambda c: -c["area"])
+    codes = set(countries) | {"SOL", "SAH", "SDS"}
+    places = json.loads((ROOT / "data" / "ref" / "ne_10m_populated_places_simple.geojson").read_text())
+    for f in places["features"]:
+        p = f["properties"]
+        if p["adm0_a3"] not in codes or p["min_zoom"] > 8:
+            continue
+        lon, lat = f["geometry"]["coordinates"]
+        labels["cities"].append({
+            "name": p["name"], "lon": round(lon, 3), "lat": round(lat, 3),
+            # zoom from which the label shows; capitals first
+            "z": 4.5 if p["adm0cap"] else max(5, p["min_zoom"]),
+            "cap": bool(p["adm0cap"]),
+        })
+    # Natural Earth has a few duplicates of capital names (e.g. a 'Niamey' in Nigeria)
+    capitals = {c["name"] for c in labels["cities"] if c["cap"]}
+    labels["cities"] = [c for c in labels["cities"] if c["cap"] or c["name"] not in capitals]
+    labels["cities"].sort(key=lambda c: (c["z"], not c["cap"]))
+    (WEB / "labels.json").write_text(json.dumps(labels, ensure_ascii=False, separators=(",", ":")))
 
 
 def write_background():

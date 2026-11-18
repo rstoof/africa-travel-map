@@ -18,6 +18,49 @@ map.attributionControl.addAttribution(
 );
 
 const $ = (id) => document.getElementById(id);
+map.createPane("labels").style.zIndex = 450; // above zones, below tooltips
+map.createPane("exceptions").style.zIndex = 460; // city-exception dots above labels
+
+// Country names when zoomed out, city names (by Natural Earth min_zoom) when zoomed in.
+const COUNTRY_LABELS_BELOW = 5;
+let labelData = null;
+const labelMarkers = new Map();
+function labelMarker(key, lat, lon, cls, text) {
+  if (!labelMarkers.has(key)) {
+    const html = document.createElement("span");
+    html.className = `lbl ${cls}`;
+    html.textContent = text;
+    labelMarkers.set(key, L.marker([lat, lon], {
+      pane: "labels", interactive: false, keyboard: false,
+      icon: L.divIcon({ className: "lbl-wrap", html, iconSize: null }),
+    }));
+  }
+  return labelMarkers.get(key);
+}
+// Greedy placement: candidates in priority order, skip any that overlaps a placed label.
+function updateLabels() {
+  if (!labelData) return;
+  const z = map.getZoom();
+  const placed = [];
+  const fits = (lat, lon, text, size, centred) => {
+    const p = map.latLngToLayerPoint([lat, lon]);
+    const w = text.length * size * 0.62 + 6;
+    const x0 = centred ? p.x - w / 2 : p.x - 8;
+    const box = [x0, p.y - size, x0 + w, p.y + size];
+    if (placed.some((b) => box[0] < b[2] && box[2] > b[0] && box[1] < b[3] && box[3] > b[1])) return false;
+    placed.push(box);
+    return true;
+  };
+  for (const c of labelData.countries) {
+    const m = labelMarker(`c:${c.iso}`, c.lat, c.lon, "lbl-country", c.name);
+    z < COUNTRY_LABELS_BELOW && fits(c.lat, c.lon, c.name, 11, true) ? m.addTo(map) : m.remove();
+  }
+  for (const c of labelData.cities) {
+    const m = labelMarker(`p:${c.name}:${c.lat}`, c.lat, c.lon, `lbl-city${c.cap ? " cap" : ""}`, c.name);
+    z >= Math.max(c.z, COUNTRY_LABELS_BELOW) && fits(c.lat, c.lon, c.name, 11, false) ? m.addTo(map) : m.remove();
+  }
+}
+map.on("zoomend", updateLabels);
 const visible = new Set([1, 2, 3, 4]);
 let countries = {};
 let layer;
@@ -40,9 +83,30 @@ function formatDate(iso) {
   return iso ? new Date(iso).toLocaleDateString("nl-NL", { day: "numeric", month: "long", year: "numeric" }) : "";
 }
 
+function whyText(c, level, byLevel = c.by_level) {
+  if (byLevel && byLevel[level]) return byLevel[level];
+  // single-colour countries have no regional section; their summary explains it
+  return c.levels.length === 1 ? c.summary : "";
+}
+
+function showWhy(c, zone, byLevel) {
+  const html = zone ? whyText(c, zone.level, byLevel) : "";
+  $("d-why").hidden = !html;
+  if (!html) return;
+  const lvl = LEVELS[zone.level];
+  $("d-why").style.borderColor = lvl.color;
+  $("d-why-title").textContent = zone.city
+    ? `Waarom ${lvl.name.toLowerCase()} voor ${zone.city}?`
+    : `Waarom ${lvl.name.toLowerCase()}? ${lvl.label}`;
+  // HTML is sanitised to an allow-list at build time (src/build.py)
+  $("d-why-body").innerHTML = html;
+}
+
 function showCountry(iso, zone) {
   const c = countries[iso];
   if (!c) return;
+  $("d-change").hidden = true;
+  showWhy(c, zone);
   selected = iso;
   history.replaceState(null, "", `#${iso}`);
   $("intro").hidden = true;
@@ -68,6 +132,7 @@ function showCountry(iso, zone) {
   $("d-hist-wrap").hidden = true;
   showCountryHistory(iso);
   $("panel").scrollTop = 0;
+  if (!map.hasLayer(layer)) return; // changes mode draws its own layers
   layer.setStyle(style);
   layer.eachLayer((l) => {
     if (l.feature.properties.iso !== iso) return;
@@ -80,8 +145,12 @@ function showCountry(iso, zone) {
 
 function closeDetail() {
   selected = null;
-  history.replaceState(null, "", location.pathname);
   $("detail").hidden = true;
+  if (!map.hasLayer(layer)) {
+    $("changes").hidden = false; // back to the list of changes
+    return;
+  }
+  history.replaceState(null, "", location.pathname);
   $("intro").hidden = false;
   layer.setStyle(style);
 }
@@ -138,7 +207,8 @@ Promise.all([
   fetch("data/land.geojson").then((r) => r.json()),
   fetch("data/zones.geojson").then((r) => r.json()),
   fetch("data/countries.json").then((r) => r.json()),
-]).then(([land, zones, meta]) => {
+  fetch("data/labels.json").then((r) => r.json()),
+]).then(([land, zones, meta, labels]) => {
   L.geoJSON(land, {
     interactive: false,
     style: { fillColor: dark ? "#2a303c" : "#e9e7e2", fillOpacity: 1, color: dark ? "#3a4252" : "#c9c6bf", weight: 0.6 },
@@ -160,6 +230,20 @@ Promise.all([
       l.on("mouseout", () => l.setStyle({ fillOpacity: visible.has(f.properties.level) ? 0.72 : 0 }));
     },
   }).addTo(map);
+  // city exceptions are only a few pixels wide when zoomed out: mark them with a fixed-size dot
+  layer.eachLayer((l) => {
+    const p = l.feature.properties;
+    if (!p.city) return;
+    const dot = L.circleMarker(l.getBounds().getCenter(), {
+      pane: "exceptions", radius: 5, fillColor: LEVELS[p.level].color, fillOpacity: 1, color: "#1d2330", weight: 1.5,
+    });
+    dot.feature = l.feature;
+    dot.bindTooltip(l.getTooltip().getContent(), { direction: "top", offset: [0, -6] });
+    dot.on("click", () => showCountry(p.iso, p));
+    layer.addLayer(dot);
+  });
+  labelData = labels;
+  updateLabels();
   buildLegend(zones.features);
   buildSearch();
   const n = Object.keys(countries).length;

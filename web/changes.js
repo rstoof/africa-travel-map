@@ -85,11 +85,15 @@ async function renderChanges({ zoomTo } = {}) {
       fillColor: LEVELS[f.properties.to].color, fillOpacity: 0.95,
       color: f.properties.to > f.properties.from ? "#7a0010" : "#1565c0", weight: 2,
     }),
-    onEachFeature: (f, l) => l.bindTooltip(
-      `<strong>${countries[f.properties.iso]?.name ?? f.properties.iso}</strong><br>` +
-        `${chip(f.properties.from, f.properties.to)}<br>${km(f.properties.km2)}`,
-      { sticky: true },
-    ),
+    onEachFeature: (f, l) => {
+      l.bindTooltip(
+        `<strong>${countries[f.properties.iso]?.name ?? f.properties.iso}</strong><br>` +
+          `${chip(f.properties.from, f.properties.to)}<br>${km(f.properties.km2)}<br>` +
+          `<em>Klik voor de toelichting in het reisadvies</em>`,
+        { sticky: true },
+      );
+      l.on("click", () => showChange(f.properties.iso, f.properties, from, to));
+    },
   }).addTo(histLayer);
 
   // panel: events whose date falls in (from, to]
@@ -100,7 +104,16 @@ async function renderChanges({ zoomTo } = {}) {
     ? `${events.length} wijziging${events.length > 1 ? "en" : ""}: ${km(worse)} strenger, ${km(better)} milder`
     : "Geen kleurwijzigingen in deze periode.";
   const list = $("c-events");
-  list.replaceChildren(...events.map((e) => eventItem(e, () => zoomToDiff(diffLayer, e.iso))));
+  list.replaceChildren(...events.map((e) => eventItem(e, () => {
+    zoomToDiff(diffLayer, e.iso);
+    // explain the transition covering the largest area
+    let biggest = null;
+    diffLayer.eachLayer((l) => {
+      const p = l.feature.properties;
+      if (p.iso === e.iso && (!biggest || p.km2 > biggest.km2)) biggest = p;
+    });
+    showChange(e.iso, biggest, from, to);
+  })));
   const texts = h.text_updates.filter((t) => t.date > from && t.date <= to);
   $("c-text-wrap").hidden = !texts.length;
   $("c-text").replaceChildren(...texts.map((t) => {
@@ -110,6 +123,79 @@ async function renderChanges({ zoomTo } = {}) {
     return li;
   }));
   if (zoomTo) zoomToDiff(diffLayer, zoomTo);
+}
+
+// Text version in force on `date`, or null when we have none that old.
+function textAt(h, iso, date) {
+  let found = null;
+  for (const t of h.texts?.[iso] || []) if (t.date <= date) found = t.date;
+  return found && getJSON(`data/history/${iso}/text_${found}.json`).then((t) => ({ ...t, date: found }));
+}
+
+function sentences(html) {
+  const div = document.createElement("div");
+  div.innerHTML = html || "";
+  return div.textContent.split(/(?<=[.!?])\s+/).map((x) => x.trim()).filter(Boolean);
+}
+
+// Sentence-level diff (LCS); returns [{op: "same"|"add"|"del", text}].
+function diffSentences(a, b) {
+  const n = a.length, m = b.length;
+  const dp = Array.from({ length: n + 1 }, () => new Uint16Array(m + 1));
+  for (let i = n - 1; i >= 0; i--)
+    for (let j = m - 1; j >= 0; j--)
+      dp[i][j] = a[i] === b[j] ? dp[i + 1][j + 1] + 1 : Math.max(dp[i + 1][j], dp[i][j + 1]);
+  const out = [];
+  let i = 0, j = 0;
+  while (i < n || j < m) {
+    if (i < n && j < m && a[i] === b[j]) { out.push({ op: "same", text: a[i] }); i++; j++; }
+    else if (j < m && (i === n || dp[i][j + 1] >= dp[i + 1][j])) out.push({ op: "add", text: b[j++] });
+    else out.push({ op: "del", text: a[i++] });
+  }
+  return out;
+}
+
+async function showChange(iso, piece, from, to) {
+  const h = await loadHistory();
+  const c = countries[iso];
+  showCountry(iso, piece ? { level: piece.to } : null);
+  $("changes").hidden = true;
+  $("detail").hidden = false;
+  history.replaceState(null, "", `#wijzigingen/${from}/${to}`);
+
+  const [before, after] = await Promise.all([textAt(h, iso, from), textAt(h, iso, to)]);
+  // explain with the text that was in force on the end date when we have it
+  if (piece && after) showWhy(c, { level: piece.to }, after.by_level);
+
+  $("d-change").hidden = false;
+  $("d-change-title").innerHTML = piece
+    ? `Gewijzigd: ${chip(piece.from, piece.to)}`
+    : "Gewijzigd";
+  $("d-change-meta").textContent = piece
+    ? `${km(piece.km2)} tussen ${formatDate(from)} en ${formatDate(to)}`
+    : `Tussen ${formatDate(from)} en ${formatDate(to)}`;
+
+  const show = (id, on) => ($(id).hidden = !on);
+  if (before && after && before.date !== after.date) {
+    const ops = diffSentences(sentences(before.regional || before.summary), sentences(after.regional || after.summary))
+      .filter((o) => o.op !== "same");
+    const body = $("d-textdiff-body");
+    body.replaceChildren(...ops.map((o) => {
+      const el = document.createElement(o.op === "add" ? "ins" : "del");
+      el.textContent = o.text;
+      return el;
+    }));
+    show("d-textdiff", ops.length);
+    show("d-textdiff-none", !ops.length);
+    $("d-textdiff-none").textContent = `Geen tekstverschil in 'Regionale risico's' tussen ${formatDate(before.date)} en ${formatDate(after.date)}.`;
+  } else {
+    show("d-textdiff", false);
+    show("d-textdiff-none", true);
+    const first = h.texts?.[iso]?.[0]?.date;
+    $("d-textdiff-none").textContent = first
+      ? `Tekstversies worden bewaard vanaf ${formatDate(first)}; van vóór die datum is geen tekst om mee te vergelijken. De toelichting hieronder is de tekst van ${formatDate(after?.date || first)}.`
+      : "Nog geen eerdere tekstversie bewaard om mee te vergelijken.";
+  }
 }
 
 function zoomToDiff(diffLayer, iso) {
