@@ -73,7 +73,7 @@ differs (`diff_<a>_<b>.geojson`, with from/to level and km² in an equal-area pr
 
 A change is dated by the date in the ministry's map file name (`Reisadvies_Mali_12-11-2026.png`)
 when that's plausible; otherwise it's recorded as "between the previous snapshot and today".
-Text-only updates (new `lastmodified` without colour change) are logged separately.
+Text updates (a new `lastmodified`) are listed separately.
 
 Each version of the advice text is stored too (`text_<date>.json`, from the first run on), so clicking
 a changed area shows the text section for its new colour and, once older versions exist, a
