@@ -9,6 +9,7 @@ on:
 
 permissions:
   contents: write
+  issues: write
   pages: write
   id-token: write
 
@@ -37,10 +38,11 @@ jobs:
           key: natural-earth-v1
 
       - name: Run pipeline
+        env:
+          SITE_URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/
         run: make all PY="python -W ignore"
 
       - name: Commit updated data
-        if: github.event_name != 'push'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
@@ -51,6 +53,12 @@ jobs:
             git commit -m "Update travel advice data $(date -u +%F)"
             git push
           fi
+
+      - name: Open an issue for colour changes
+        if: hashFiles('data/changes.md') != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh issue create --title "Reisadvies gewijzigd $(date -u +%F)" --body-file data/changes.md
 
       - uses: actions/upload-pages-artifact@v3
         with:

@@ -1,8 +1,10 @@
 PY ?= .venv/bin/python -W ignore
 
-.PHONY: all ref fetch trace build preview serve
+SNAPSHOT_DATE ?=
 
-all: ref fetch trace build
+.PHONY: all ref fetch trace build history preview serve
+
+all: ref fetch trace build history
 
 ref:
 	$(PY) src/ref.py
@@ -15,6 +17,9 @@ trace:
 
 build:
 	$(PY) src/build.py
+
+history:
+	$(PY) src/history.py record $(if $(SNAPSHOT_DATE),--date $(SNAPSHOT_DATE))
 
 preview:
 	$(PY) src/preview.py data/preview.png

@@ -17,6 +17,7 @@ regional risks text, with a link to the official advice.
 fetch.py   API ──► data/raw/<ISO>/advice.json + map.png
 trace.py   map.png ──► data/traced/<ISO>.geojson   (+ <ISO>.json fit report)
 build.py   traced + advice ──► web/data/{zones.geojson, countries.json, land.geojson}
+history.py web/data ──► web/data/history/ (snapshots, diffs, events) + web/feed.xml
 web/       static Leaflet app, no API keys, no tile server
 ```
 
@@ -39,11 +40,38 @@ Single-colour countries skip the fit and use the outline directly.
 colours. A mismatch (usually a map that lags behind a text update) is printed during the build and shown as a
 warning in the app. At the time of writing all 55 countries match.
 
+## Change history
+
+`src/history.py record` compares the freshly built zones with the last snapshot of each country.
+Only when the colours change (≥ 50 km², or a different set of levels) does it store a new snapshot
+`web/data/history/<ISO>/<date>.geojson`. For every pair of snapshots it precomputes the areas whose level
+differs (`diff_<a>_<b>.geojson`, with from/to level and km² in an equal-area projection).
+
+A change is dated by the date in the ministry's map file name (`Reisadvies_Mali_12-11-2026.png`)
+when that's plausible; otherwise it's recorded as "between the previous snapshot and today".
+Text-only updates (new `lastmodified` without colour change) are logged separately.
+
+In the app, the **Wijzigingen** tab lets you pick any period: the map shows the situation on the end
+date, outlines the areas that changed colour (dark red = stricter, blue = milder), and lists the changes.
+Each country's detail panel shows its own history. Deep link: `#wijzigingen/2025-11-02/2026-11-18`.
+
+The history starts on **2 November 2025**, backfilled from maps saved by an earlier project:
+
+```bash
+python src/history.py backfill <dir with <locationkey>_legend.png> 2025-11-02
+```
+
+## Monitoring
+
+- The daily workflow commits new snapshots and **opens a GitHub issue** listing the colour changes
+  (watch the repository to get these by e-mail).
+- `feed.xml` is an Atom feed of all colour changes. Subscribe in any feed reader.
+
 ## Run it
 
 ```bash
 python3 -m venv .venv && .venv/bin/pip install -r requirements.txt
-make all        # ref data, fetch, trace, build  (~1–2 min)
+make all        # ref data, fetch, trace, build, history  (~1–2 min)
 make preview    # data/preview.png, a static quick-look of all zones
 make serve      # http://localhost:8000
 ```
@@ -52,8 +80,8 @@ Open `http://localhost:8000/#NGA` to deep-link a country (ISO3 code).
 
 ## Automation
 
-`.github/workflows/update.yml` runs daily: fetch → trace → build, commits changed data, and deploys
-`web/` to GitHub Pages. Enable Pages with source **GitHub Actions** in the repository settings.
+`.github/workflows/update.yml` runs daily: fetch → trace → build → history, commits changed data,
+opens an issue for colour changes, and deploys `web/` to GitHub Pages. Enable Pages with source **GitHub Actions** in the repository settings.
 
 ## Overrides
 

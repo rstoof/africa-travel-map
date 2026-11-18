@@ -202,8 +202,8 @@ def clean_small(levels):
     return out
 
 
-def trace(iso):
-    img = np.array(Image.open(RAW / iso / "map.png").convert("RGB"))
+def trace(iso, image_path=None):
+    img = np.array(Image.open(image_path or RAW / iso / "map.png").convert("RGB"))
     labels = drop_legend(classify(img))
     mask = country_mask(labels)
     labels[~mask] = 0

@@ -65,6 +65,8 @@ function showCountry(iso, zone) {
   $("d-regional-wrap").hidden = !c.regional;
   $("d-current").innerHTML = c.current || "";
   $("d-current-wrap").hidden = !c.current;
+  $("d-hist-wrap").hidden = true;
+  showCountryHistory(iso);
   $("panel").scrollTop = 0;
   layer.setStyle(style);
   layer.eachLayer((l) => {
@@ -162,8 +164,9 @@ Promise.all([
   buildSearch();
   const n = Object.keys(countries).length;
   $("counts").textContent = `${n} landen en gebieden.`;
-  const fromHash = location.hash.slice(1).toUpperCase();
-  if (countries[fromHash]) focusCountry(fromHash);
+  const [head, from, to] = location.hash.slice(1).split("/");
+  if (head === "wijzigingen") setMode("changes", { from, to });
+  else if (countries[head.toUpperCase()]) focusCountry(head.toUpperCase());
 });
 
 $("close").onclick = closeDetail;

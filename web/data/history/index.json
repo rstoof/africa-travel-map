@@ -1,0 +1,859 @@
+{
+ "snapshots": {
+  "AGO": [
+   {
+    "date": "2025-11-02",
+    "levels": [
+     2,
+     3
+    ],
+    "observed": "2025-11-02",
+    "source": "backfill"
+   }
+  ],
+  "BDI": [
+   {
+    "date": "2025-11-02",
+    "levels": [
+     2,
+     3,
+     4
+    ],
+    "observed": "2025-11-02",
+    "source": "backfill"
+   }
+  ],
+  "BEN": [
+   {
+    "date": "2025-11-02",
+    "levels": [
+     2,
+     3,
+     4
+    ],
+    "observed": "2025-11-02",
+    "source": "backfill"
+   },
+   {
+    "date": "2026-03-25",
+    "levels": [
+     2,
+     3,
+     4
+    ],
+    "observed": "2026-11-18",
+    "dated_by": "map",
+    "after": null,
+    "map_file": "Reisadvies_Benin_25-03-2026.png"
+   }
+  ],
+  "BFA": [
+   {
+    "date": "2025-11-02",
+    "levels": [
+     3,
+     4
+    ],
+    "observed": "2025-11-02",
+    "source": "backfill"
+   }
+  ],
+  "BWA": [
+   {
+    "date": "2025-11-02",
+    "levels": [
+     2
+    ],
+    "observed": "2025-11-02",
+    "source": "backfill"
+   }
+  ],
+  "CAF": [
+   {
+    "date": "2025-11-02",
+    "levels": [
+     4
+    ],
+    "observed": "2025-11-02",
+    "source": "backfill"
+   }
+  ],
+  "CIV": [
+   {
+    "date": "2025-11-02",
+    "levels": [
+     2,
+     3,
+     4
+    ],
+    "observed": "2025-11-02",
+    "source": "backfill"
+   }
+  ],
+  "CMR": [
+   {
+    "date": "2025-11-02",
+    "levels": [
+     2,
+     3,
+     4
+    ],
+    "observed": "2025-11-02",
+    "source": "backfill"
+   }
+  ],
+  "COD": [
+   {
+    "date": "2025-11-02",
+    "levels": [
+     3,
+     4
+    ],
+    "observed": "2025-11-02",
+    "source": "backfill"
+   }
+  ],
+  "COG": [
+   {
+    "date": "2025-11-02",
+    "levels": [
+     2,
+     3
+    ],
+    "observed": "2025-11-02",
+    "source": "backfill"
+   }
+  ],
+  "COM": [
+   {
+    "date": "2025-11-02",
+    "levels": [
+     2
+    ],
+    "observed": "2025-11-02",
+    "source": "backfill"
+   }
+  ],
+  "CPV": [
+   {
+    "date": "2025-11-02",
+    "levels": [
+     2
+    ],
+    "observed": "2025-11-02",
+    "source": "backfill"
+   }
+  ],
+  "DJI": [
+   {
+    "date": "2025-11-02",
+    "levels": [
+     2,
+     4
+    ],
+    "observed": "2025-11-02",
+    "source": "backfill"
+   }
+  ],
+  "DZA": [
+   {
+    "date": "2025-11-02",
+    "levels": [
+     2,
+     4
+    ],
+    "observed": "2025-11-02",
+    "source": "backfill"
+   },
+   {
+    "date": "2026-02-13",
+    "levels": [
+     2,
+     3,
+     4
+    ],
+    "observed": "2026-11-18",
+    "dated_by": "map",
+    "after": null,
+    "map_file": "Reisadvies_Algerije_13-02-2026.png"
+   }
+  ],
+  "EGY": [
+   {
+    "date": "2025-11-02",
+    "levels": [
+     2,
+     3,
+     4
+    ],
+    "observed": "2025-11-02",
+    "source": "backfill"
+   }
+  ],
+  "ERI": [
+   {
+    "date": "2025-11-02",
+    "levels": [
+     3,
+     4
+    ],
+    "observed": "2025-11-02",
+    "source": "backfill"
+   }
+  ],
+  "ETH": [
+   {
+    "date": "2025-11-02",
+    "levels": [
+     2,
+     3,
+     4
+    ],
+    "observed": "2025-11-02",
+    "source": "backfill"
+   },
+   {
+    "date": "2026-09-30",
+    "levels": [
+     2,
+     3,
+     4
+    ],
+    "observed": "2026-11-18",
+    "dated_by": "map",
+    "after": null,
+    "map_file": "Reisadvies_Ethiopië_30-09-2026.png"
+   }
+  ],
+  "GAB": [
+   {
+    "date": "2025-11-02",
+    "levels": [
+     2
+    ],
+    "observed": "2025-11-02",
+    "source": "backfill"
+   }
+  ],
+  "GHA": [
+   {
+    "date": "2025-11-02",
+    "levels": [
+     2,
+     3
+    ],
+    "observed": "2025-11-02",
+    "source": "backfill"
+   }
+  ],
+  "GIN": [
+   {
+    "date": "2025-11-02",
+    "levels": [
+     2,
+     3
+    ],
+    "observed": "2025-11-02",
+    "source": "backfill"
+   }
+  ],
+  "GMB": [
+   {
+    "date": "2025-11-02",
+    "levels": [
+     2
+    ],
+    "observed": "2025-11-02",
+    "source": "backfill"
+   }
+  ],
+  "GNB": [
+   {
+    "date": "2025-11-02",
+    "levels": [
+     2,
+     3
+    ],
+    "observed": "2025-11-02",
+    "source": "backfill"
+   }
+  ],
+  "GNQ": [
+   {
+    "date": "2025-11-02",
+    "levels": [
+     2
+    ],
+    "observed": "2025-11-02",
+    "source": "backfill"
+   }
+  ],
+  "KEN": [
+   {
+    "date": "2025-11-02",
+    "levels": [
+     2,
+     3,
+     4
+    ],
+    "observed": "2025-11-02",
+    "source": "backfill"
+   }
+  ],
+  "LBR": [
+   {
+    "date": "2025-11-02",
+    "levels": [
+     2,
+     3
+    ],
+    "observed": "2025-11-02",
+    "source": "backfill"
+   }
+  ],
+  "LBY": [
+   {
+    "date": "2025-11-02",
+    "levels": [
+     4
+    ],
+    "observed": "2025-11-02",
+    "source": "backfill"
+   }
+  ],
+  "LSO": [
+   {
+    "date": "2025-11-02",
+    "levels": [
+     2
+    ],
+    "observed": "2025-11-02",
+    "source": "backfill"
+   }
+  ],
+  "MAR": [
+   {
+    "date": "2025-11-02",
+    "levels": [
+     2,
+     3,
+     4
+    ],
+    "observed": "2025-11-02",
+    "source": "backfill"
+   }
+  ],
+  "MDG": [
+   {
+    "date": "2025-11-02",
+    "levels": [
+     2
+    ],
+    "observed": "2025-11-02",
+    "source": "backfill"
+   }
+  ],
+  "MLI": [
+   {
+    "date": "2025-11-02",
+    "levels": [
+     4
+    ],
+    "observed": "2025-11-02",
+    "source": "backfill"
+   },
+   {
+    "date": "2026-11-12",
+    "levels": [
+     3,
+     4
+    ],
+    "observed": "2026-11-18",
+    "dated_by": "map",
+    "after": null,
+    "map_file": "Reisadvies_Mali_12-11-2026.png"
+   }
+  ],
+  "MOZ": [
+   {
+    "date": "2025-11-02",
+    "levels": [
+     2,
+     3,
+     4
+    ],
+    "observed": "2025-11-02",
+    "source": "backfill"
+   },
+   {
+    "date": "2025-12-04",
+    "levels": [
+     2,
+     3,
+     4
+    ],
+    "observed": "2026-11-18",
+    "dated_by": "map",
+    "after": null,
+    "map_file": "Reisadvies_Mozambique_04-12-2025.png"
+   }
+  ],
+  "MRT": [
+   {
+    "date": "2025-11-02",
+    "levels": [
+     2,
+     3,
+     4
+    ],
+    "observed": "2025-11-02",
+    "source": "backfill"
+   }
+  ],
+  "MUS": [
+   {
+    "date": "2025-11-02",
+    "levels": [
+     2
+    ],
+    "observed": "2025-11-02",
+    "source": "backfill"
+   }
+  ],
+  "MWI": [
+   {
+    "date": "2025-11-02",
+    "levels": [
+     2
+    ],
+    "observed": "2025-11-02",
+    "source": "backfill"
+   }
+  ],
+  "NAM": [
+   {
+    "date": "2025-11-02",
+    "levels": [
+     2
+    ],
+    "observed": "2025-11-02",
+    "source": "backfill"
+   }
+  ],
+  "NER": [
+   {
+    "date": "2025-11-02",
+    "levels": [
+     4
+    ],
+    "observed": "2025-11-02",
+    "source": "backfill"
+   }
+  ],
+  "NGA": [
+   {
+    "date": "2025-11-02",
+    "levels": [
+     3,
+     4
+    ],
+    "observed": "2025-11-02",
+    "source": "backfill"
+   }
+  ],
+  "RWA": [
+   {
+    "date": "2025-11-02",
+    "levels": [
+     2,
+     3
+    ],
+    "observed": "2025-11-02",
+    "source": "backfill"
+   }
+  ],
+  "SDN": [
+   {
+    "date": "2025-11-02",
+    "levels": [
+     4
+    ],
+    "observed": "2025-11-02",
+    "source": "backfill"
+   }
+  ],
+  "SEN": [
+   {
+    "date": "2025-11-02",
+    "levels": [
+     2,
+     3
+    ],
+    "observed": "2025-11-02",
+    "source": "backfill"
+   }
+  ],
+  "SLE": [
+   {
+    "date": "2025-11-02",
+    "levels": [
+     2
+    ],
+    "observed": "2025-11-02",
+    "source": "backfill"
+   }
+  ],
+  "SOM": [
+   {
+    "date": "2025-11-02",
+    "levels": [
+     3,
+     4
+    ],
+    "observed": "2025-11-02",
+    "source": "backfill"
+   }
+  ],
+  "SSD": [
+   {
+    "date": "2025-11-02",
+    "levels": [
+     4
+    ],
+    "observed": "2025-11-02",
+    "source": "backfill"
+   }
+  ],
+  "STP": [
+   {
+    "date": "2025-11-02",
+    "levels": [
+     2
+    ],
+    "observed": "2025-11-02",
+    "source": "backfill"
+   }
+  ],
+  "SWZ": [
+   {
+    "date": "2025-11-02",
+    "levels": [
+     2
+    ],
+    "observed": "2025-11-02",
+    "source": "backfill"
+   }
+  ],
+  "SYC": [
+   {
+    "date": "2025-11-02",
+    "levels": [
+     2
+    ],
+    "observed": "2025-11-02",
+    "source": "backfill"
+   }
+  ],
+  "TCD": [
+   {
+    "date": "2025-11-02",
+    "levels": [
+     3,
+     4
+    ],
+    "observed": "2025-11-02",
+    "source": "backfill"
+   }
+  ],
+  "TGO": [
+   {
+    "date": "2025-11-02",
+    "levels": [
+     2,
+     4
+    ],
+    "observed": "2025-11-02",
+    "source": "backfill"
+   },
+   {
+    "date": "2026-11-18",
+    "levels": [
+     2,
+     3,
+     4
+    ],
+    "observed": "2026-11-18",
+    "dated_by": "observed",
+    "after": "2025-11-02",
+    "map_file": "Reisadvies_Togo_24-01-2024 (1).png"
+   }
+  ],
+  "TUN": [
+   {
+    "date": "2025-11-02",
+    "levels": [
+     2,
+     3,
+     4
+    ],
+    "observed": "2025-11-02",
+    "source": "backfill"
+   }
+  ],
+  "TZA": [
+   {
+    "date": "2025-11-02",
+    "levels": [
+     2,
+     3
+    ],
+    "observed": "2025-11-02",
+    "source": "backfill"
+   }
+  ],
+  "UGA": [
+   {
+    "date": "2025-11-02",
+    "levels": [
+     2
+    ],
+    "observed": "2025-11-02",
+    "source": "backfill"
+   }
+  ],
+  "ZAF": [
+   {
+    "date": "2025-11-02",
+    "levels": [
+     2
+    ],
+    "observed": "2025-11-02",
+    "source": "backfill"
+   }
+  ],
+  "ZMB": [
+   {
+    "date": "2025-11-02",
+    "levels": [
+     2,
+     3
+    ],
+    "observed": "2025-11-02",
+    "source": "backfill"
+   }
+  ],
+  "ZWE": [
+   {
+    "date": "2025-11-02",
+    "levels": [
+     2
+    ],
+    "observed": "2025-11-02",
+    "source": "backfill"
+   }
+  ],
+  "REU": [
+   {
+    "date": "2025-11-02",
+    "levels": [
+     1
+    ],
+    "observed": "2026-11-18",
+    "dated_by": "baseline",
+    "after": null,
+    "map_file": "Reisadvies_Réunion_25-08-2023.png"
+   }
+  ]
+ },
+ "lastmodified": {
+  "AGO": "2026-11-18T14:02:45.355Z",
+  "BDI": "2026-10-13T13:47:14.818Z",
+  "BEN": "2026-10-15T15:08:25.035Z",
+  "BFA": "2026-11-18T15:41:02.983Z",
+  "BWA": "2026-07-01T12:01:11.917Z",
+  "CAF": "2026-09-22T15:09:39.794Z",
+  "CIV": "2026-06-17T10:42:42.267Z",
+  "CMR": "2026-10-06T13:32:00.564Z",
+  "COD": "2026-11-12T11:52:25.934Z",
+  "COG": "2026-11-04T12:02:44.729Z",
+  "COM": "2026-11-12T13:24:22.865Z",
+  "CPV": "2026-07-06T11:23:34.384Z",
+  "DJI": "2026-06-25T12:04:02.252Z",
+  "DZA": "2026-07-31T06:37:11.865Z",
+  "EGY": "2026-06-25T12:04:36.079Z",
+  "ERI": "2026-10-13T12:39:34.106Z",
+  "ETH": "2026-11-05T11:45:46.922Z",
+  "GAB": "2026-07-28T07:34:57.442Z",
+  "GHA": "2026-10-13T13:54:07.282Z",
+  "GIN": "2026-11-13T15:06:21.264Z",
+  "GMB": "2026-05-20T10:52:02.853Z",
+  "GNB": "2026-06-12T12:05:47.451Z",
+  "GNQ": "2026-06-12T13:24:28.268Z",
+  "KEN": "2026-10-20T07:53:17.038Z",
+  "LBR": "2026-10-23T14:03:19.488Z",
+  "LBY": "2026-07-24T12:28:06.082Z",
+  "LSO": "2026-07-08T10:01:43.429Z",
+  "MAR": "2026-11-12T10:42:09.248Z",
+  "MDG": "2026-10-28T11:19:07.555Z",
+  "MLI": "2026-11-12T10:21:34.409Z",
+  "MOZ": "2026-10-06T13:50:26.249Z",
+  "MRT": "2026-10-06T13:39:24.447Z",
+  "MUS": "2026-10-06T13:40:48.743Z",
+  "MWI": "2026-07-29T12:45:54.382Z",
+  "NAM": "2026-10-01T15:30:54.796Z",
+  "NER": "2026-07-09T13:26:08.758Z",
+  "NGA": "2026-10-13T13:55:34.302Z",
+  "REU": "2026-03-19T09:21:11.246Z",
+  "RWA": "2026-09-15T13:47:41.409Z",
+  "SDN": "2026-09-22T08:06:26.995Z",
+  "SEN": "2026-09-01T13:49:29.012Z",
+  "SLE": "2026-11-18T11:00:36.265Z",
+  "SOM": "2026-08-04T08:38:16.756Z",
+  "SSD": "2026-07-31T12:40:07.347Z",
+  "STP": "2026-08-28T10:37:27.042Z",
+  "SWZ": "2026-07-08T08:22:26.817Z",
+  "SYC": "2026-09-09T11:40:35.459Z",
+  "TCD": "2026-10-15T14:19:39.920Z",
+  "TGO": "2026-06-19T09:24:10.629Z",
+  "TUN": "2026-10-27T09:43:26.927Z",
+  "TZA": "2026-10-19T11:24:40.529Z",
+  "UGA": "2026-10-15T15:05:36.416Z",
+  "ZAF": "2026-07-07T14:00:59.863Z",
+  "ZMB": "2026-05-29T07:49:44.816Z",
+  "ZWE": "2026-06-30T07:37:36.322Z"
+ },
+ "text_updates": [],
+ "events": [
+  {
+   "date": "2026-11-18",
+   "iso": "TGO",
+   "name": "Togo",
+   "prev": "2025-11-02",
+   "after": "2025-11-02",
+   "worse_km2": 5180,
+   "better_km2": 0,
+   "transitions": [
+    [
+     2,
+     3
+    ]
+   ]
+  },
+  {
+   "date": "2026-11-12",
+   "iso": "MLI",
+   "name": "Mali",
+   "prev": "2025-11-02",
+   "after": null,
+   "worse_km2": 0,
+   "better_km2": 195,
+   "transitions": [
+    [
+     4,
+     3
+    ]
+   ]
+  },
+  {
+   "date": "2026-09-30",
+   "iso": "ETH",
+   "name": "Ethiopië",
+   "prev": "2025-11-02",
+   "after": null,
+   "worse_km2": 173889,
+   "better_km2": 4877,
+   "transitions": [
+    [
+     2,
+     3
+    ],
+    [
+     2,
+     4
+    ],
+    [
+     3,
+     2
+    ],
+    [
+     3,
+     4
+    ],
+    [
+     4,
+     3
+    ]
+   ]
+  },
+  {
+   "date": "2026-03-25",
+   "iso": "BEN",
+   "name": "Benin",
+   "prev": "2025-11-02",
+   "after": null,
+   "worse_km2": 26144,
+   "better_km2": 0,
+   "transitions": [
+    [
+     2,
+     3
+    ],
+    [
+     2,
+     4
+    ],
+    [
+     3,
+     4
+    ]
+   ]
+  },
+  {
+   "date": "2026-02-13",
+   "iso": "DZA",
+   "name": "Algerije",
+   "prev": "2025-11-02",
+   "after": null,
+   "worse_km2": 157,
+   "better_km2": 61672,
+   "transitions": [
+    [
+     2,
+     4
+    ],
+    [
+     4,
+     2
+    ],
+    [
+     4,
+     3
+    ]
+   ]
+  },
+  {
+   "date": "2025-12-04",
+   "iso": "MOZ",
+   "name": "Mozambique",
+   "prev": "2025-11-02",
+   "after": null,
+   "worse_km2": 9482,
+   "better_km2": 0,
+   "transitions": [
+    [
+     2,
+     3
+    ]
+   ]
+  }
+ ],
+ "dates": [
+  "2025-11-02",
+  "2025-12-04",
+  "2026-02-13",
+  "2026-03-25",
+  "2026-09-30",
+  "2026-11-12",
+  "2026-11-18"
+ ]
+}

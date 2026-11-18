@@ -73,6 +73,20 @@ def text_levels(advice):
     return sorted({v for k, v in LEVEL_WORDS.items() if re.search(rf"\b{k}\b", t)})
 
 
+def publishable(iso, zones):
+    """Simplify and round traced zones into the features the app (and history) uses."""
+    out = []
+    for z in zones:
+        geom = shape(z["geometry"]).simplify(SIMPLIFY_DEG, preserve_topology=True)
+        if geom.is_empty:
+            continue
+        props = {"iso": iso, "level": z["properties"]["level"]}
+        if z["properties"].get("city"):
+            props["city"] = z["properties"]["city"]
+        out.append({"type": "Feature", "properties": props, "geometry": _round(mapping(geom))})
+    return out
+
+
 def load_override(iso):
     p = OVERRIDES / f"{iso}.json"
     return json.loads(p.read_text()) if p.exists() else None
@@ -95,17 +109,9 @@ def main():
         report_path = TRACED / f"{iso}.json"
         report = json.loads(report_path.read_text()) if report_path.exists() else {}
 
-        levels = set()
-        for z in zones:
-            geom = shape(z["geometry"]).simplify(SIMPLIFY_DEG, preserve_topology=True)
-            if geom.is_empty:
-                continue
-            props = {"iso": iso, "level": z["properties"]["level"]}
-            if z["properties"].get("city"):
-                props["city"] = z["properties"]["city"]
-            levels.add(props["level"])
-            features.append({"type": "Feature", "properties": props,
-                             "geometry": _round(mapping(geom))})
+        zones = publishable(iso, zones)
+        features += zones
+        levels = {z["properties"]["level"] for z in zones}
 
         countries[iso] = {
             "name": advice["location"],

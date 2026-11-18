@@ -7,6 +7,7 @@
 <meta name="description" content="Interactieve kaart van de Nederlandse reisadviezen voor Afrika, per regio.">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <link rel="stylesheet" href="style.css">
+<link rel="alternate" type="application/atom+xml" title="Gewijzigde kleurcodes" href="feed.xml">
 </head>
 <body>
 <div id="map" aria-label="Kaart van Afrika met reisadvies per regio"></div>
@@ -15,6 +16,10 @@
   <header class="panel-head">
     <h1>Reisadvies Afrika</h1>
     <p class="sub">Kleurcodes van het Ministerie van Buitenlandse Zaken, per regio.</p>
+    <div class="tabs" role="tablist">
+      <button role="tab" id="tab-now" aria-selected="true">Huidig advies</button>
+      <button role="tab" id="tab-changes" aria-selected="false">Wijzigingen</button>
+    </div>
     <label class="search">
       <span class="sr">Zoek een land</span>
       <input id="search" type="search" placeholder="Zoek een land…" list="country-list" autocomplete="off">
@@ -32,7 +37,26 @@
     <p class="meta"><span id="d-date"></span> · <a id="d-link" target="_blank" rel="noopener">Volledig reisadvies ↗</a></p>
     <div id="d-summary" class="prose"></div>
     <details id="d-regional-wrap"><summary>Regionale risico's</summary><div id="d-regional" class="prose"></div></details>
+    <details id="d-hist-wrap" hidden><summary>Geschiedenis kleurcodes</summary><ul id="d-hist" class="events"></ul></details>
     <details id="d-current-wrap"><summary>Actueel</summary><div id="d-current" class="prose"></div></details>
+  </section>
+
+  <section id="changes" hidden>
+    <div class="range">
+      <label>Van <input type="date" id="c-from"></label>
+      <label>Tot en met <input type="date" id="c-to"></label>
+    </div>
+    <div class="presets" id="c-presets">
+      <button data-days="31">1 maand</button>
+      <button data-days="92">3 maanden</button>
+      <button data-days="365">1 jaar</button>
+      <button data-days="0">Alles</button>
+    </div>
+    <p class="c-key"><span class="key worse"></span> strenger <span class="key better"></span> milder. De kaart toont de situatie op de einddatum; omlijnde gebieden zijn van kleur veranderd.</p>
+    <p id="c-summary" class="c-summary"></p>
+    <ul id="c-events" class="events"></ul>
+    <details id="c-text-wrap" hidden><summary>Alleen tekst bijgewerkt</summary><ul id="c-text" class="events"></ul></details>
+    <p class="c-note">Geschiedenis vanaf <span id="c-since"></span>. Abonneer op wijzigingen via de <a href="feed.xml">Atom-feed</a>.</p>
   </section>
 
   <section id="intro">
@@ -49,5 +73,6 @@
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="app.js"></script>
+<script src="changes.js"></script>
 </body>
 </html>

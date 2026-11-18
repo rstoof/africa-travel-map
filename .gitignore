@@ -4,3 +4,5 @@ __pycache__/
 data/raw/
 data/ref/
 data/preview.png
+data/changes.md
+data/preview_*.png
